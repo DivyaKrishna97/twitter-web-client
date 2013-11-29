@@ -1,0 +1,5 @@
+# Twitter Web Client
+
+## Configuration
+
+The `APPLICATION_SECRET` environment variable is used to configure `application.secret`.
