@@ -2,4 +2,9 @@
 
 ## Configuration
 
-The `APPLICATION_SECRET` environment variable is used to configure `application.secret`.
+Environment variables to set up:
+
+* `APPLICATION_SECRET` to set the `application.secret` value
+* `TWITTER_CONSUMER_KEY`
+* `TWITTER_CONSUMER_SECRET`
+
