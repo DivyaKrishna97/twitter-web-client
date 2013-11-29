@@ -1,7 +1,12 @@
-@(message: String)
+@()
 
-@main("Welcome to Play") {
-
-    @play20.welcome(message)
-
+@main("Twitter Web Client") {
+<div class="row">
+    <div class="col-md-offset-4 col-md-4">
+        <p>You are not logged in.</p>
+        <a href="/authenticate/twitter" class="btn btn-primary btn-lg btn-block">
+            Sign in with Twitter
+        </a>
+    </div>
+</div>
 }
