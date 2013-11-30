@@ -13,6 +13,13 @@
             <div class="navbar-header">
                 <a class="navbar-brand" href="#">Twitter Web Client</a>
             </div>
+            <ul class="nav navbar-nav navbar-right">
+                @if(user.isDefined) {
+                <li>
+                    <a href="@securesocial.controllers.routes.LoginPage.logout()"/>Logout</a>
+                </li>
+                }
+            </ul>
         </nav>
         <div class="container">
             @content

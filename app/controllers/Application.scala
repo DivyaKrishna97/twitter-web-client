@@ -11,7 +11,7 @@ object Application extends Controller
 
   def index = UserAwareAction { implicit request =>
     request.user match {
-      case Some(user) => Redirect(routes.Protected.index)
+      case Some(user) => Redirect(routes.Client.home)
       case _ => Ok(views.html.index(user))
     }
   }
