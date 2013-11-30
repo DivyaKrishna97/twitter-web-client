@@ -36,7 +36,7 @@ object Client extends Controller
           case Failure(e) => InternalServerError(e.getMessage)
         }
       }
-      case None => Status(422)("beforeId parameter required")
+      case None => BadRequest("beforeId parameter required")
     }
   }
 
