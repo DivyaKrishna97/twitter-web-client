@@ -6,7 +6,7 @@
     <div class="list-group-item tweet" data-tweet-id="{{id}}">
         <div class="media">
             <a class="pull-left" href="https://twitter.com/{{screenName}}">
-                <img class="media-object" src="{{avatarUrl}}">
+                <img class="media-object img-rounded" src="{{avatarUrl}}">
             </a>
             <div class="media-body">
                 <h4 class="media-heading">{{author}} <small>@@{{screenName}}</small></h4>
@@ -15,6 +15,7 @@
         </div>
     </div>
 {{/each}}
+<a href="#" class="list-group-item more-tweets" data-before-tweet-id="{{beforeId}}">More Tweets</a>
 </script>
 <script type="text/javascript">
     PageStore.set('timeline', @Html(timeline));

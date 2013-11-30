@@ -6,3 +6,7 @@ body {
     height: 32px;
     width: 32px;
 }
+
+#timeline .more-tweets {
+    text-align: center;
+}
