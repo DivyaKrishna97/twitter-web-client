@@ -6,7 +6,8 @@ libraryDependencies ++= Seq(
   jdbc,
   anorm,
   cache,
-  "securesocial" %% "securesocial" % "2.1.2"
+  "securesocial" %% "securesocial" % "2.1.2",
+  "org.twitter4j" % "twitter4j-core" % "3.0.5"
 )
 
 resolvers += Resolver.url(

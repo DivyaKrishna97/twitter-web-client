@@ -1,6 +1,28 @@
-@(implicit user: Option[securesocial.core.Identity])
+@(timeline: String)(implicit user: Option[securesocial.core.Identity])
 
-@main("Home") {
+@pageScripts = {
+<script type="text/x-handlebars" id="template-tweet">
+{{#each tweets}}
+    <div class="list-group-item tweet" data-tweet-id="{{id}}">
+        <div class="media">
+            <a class="pull-left" href="https://twitter.com/{{screenName}}">
+                <img class="media-object" src="{{avatarUrl}}">
+            </a>
+            <div class="media-body">
+                <h4 class="media-heading">{{author}} <small>@@{{screenName}}</small></h4>
+                {{message}}
+            </div>
+        </div>
+    </div>
+{{/each}}
+</script>
+<script type="text/javascript">
+    PageStore.set('timeline', @Html(timeline));
+</script>
+<script src="@routes.Assets.at("javascripts/timeline.js")"></script>
+}
+
+@main("Home", pageScripts) {
 <div class="row">
     <div class="col-md-4">
         <div class="panel panel-default">
@@ -15,6 +37,10 @@
         </div>
     </div>
     <div class="col-md-8">
+        <h2>Tweets</h2>
+        <div id="timeline" class="list-group">
+
+        </div>
     </div">
 </div>
 }

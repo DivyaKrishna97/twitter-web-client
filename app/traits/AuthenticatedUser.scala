@@ -9,4 +9,11 @@ trait AuthenticatedUser {
     SecureSocial.currentUser
   }
 
+  def userAccessContext(implicit request: RequestHeader): Option[(String, String)] = {
+    for {
+      user <- SecureSocial.currentUser
+      oauthInfo <- user.oAuth1Info
+    } yield (oauthInfo.token, oauthInfo.secret)
+  }
+
 }
