@@ -21,19 +21,43 @@
     PageStore.set('timeline', @Html(timeline));
 </script>
 <script src="@routes.Assets.at("javascripts/timeline.js")"></script>
+<script src="@routes.Assets.at("javascripts/tweet_form.js")"></script>
 }
 
 @main("Home", pageScripts) {
 <div class="row">
     <div class="col-md-4">
         <div class="panel panel-default">
-             <div class="panel-heading">
-                 <h3 class="panel-title">
-                     <img src="@user.get.avatarUrl" class="img-rounded avatar">
-                     @user.get.fullName
-                 </h3>
-             </div>
-             <div class="panel-body">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    <img src="@user.get.avatarUrl" class="img-rounded avatar">
+                    @user.get.fullName
+                </h3>
+            </div>
+            <div class="panel-body">
+                <form id="tweet-form" role="form" method="post" enctype="multipart/form-data">
+                    <div class="hidden">
+                        <input type="hidden" name="utf8" value="✓">
+                        <input type="hidden" name="geolocation" value="no">
+                        <input type="hidden" name="longitude" value="0">
+                        <input type="hidden" name="latitude" value="0">
+                    </div>
+                    <div class="form-group">
+                        <textarea class="form-control"
+                                name="status"
+                                maxlength="140"
+                                placeholder="Compose new Tweet..."
+                                required></textarea>
+                    </div>
+                    <div class="photo-button btn btn-default">
+                        <span class="glyphicon glyphicon-camera"></span>
+                        <input type="file" name="photo">
+                    </div>
+                    <button type="button" class="btn btn-default js-geolocation">
+                        <span class="glyphicon glyphicon-map-marker"></span>
+                    </button>
+                    <button type="submit" class="btn btn-default pull-right">Tweet</button>
+                 </form>
              </div>
         </div>
     </div>
