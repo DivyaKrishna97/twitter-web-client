@@ -14,8 +14,6 @@ GET     /authenticate/:provider     securesocial.controllers.ProviderController.
 POST    /authenticate/:provider     securesocial.controllers.ProviderController.authenticateByPost(provider)
 GET     /not-authorized             securesocial.controllers.ProviderController.notAuthorized
 
-# Protected page
-GET     /protected                  controllers.Protected.index
 
 GET     /home                       controllers.Client.home
 
