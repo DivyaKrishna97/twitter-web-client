@@ -1,23 +1,32 @@
 $ = jQuery
 GPS = geo_position_js
 
-# TODO indicate when geolocation is active
 # TODO indicate when image is selected
 class TweetForm
 
   constructor: (@$el) ->
     if GPS.init()
-      @$el.on('click', '.js-geolocation', @requestGeolocation)
+      @$el.on('click', '.js-geolocation', @toggleGeolocation)
     else
       @$el.find('.js-geolocation').remove()
+    @$gpsButton = @$el.find('.js-geolocation')
+    @$geolocation = @$el.find('[name=geolocation]')
+    @$longitude = @$el.find('[name=longitude]')
+    @$latitude = @$el.find('[name=latitude]')
 
-  requestGeolocation: =>
+  toggleGeolocation: =>
+    if @$geolocation.val() is 'true'
+      @$geolocation.val('false')
+      @_geolocationIndicator off
+      return
+
     # TODO display success or failure message
     GPS.getCurrentPosition(
       (pos) =>
-        @$el.find('[name=geolocation]').val('true')
-        @$el.find('[name=longitude]').val(pos.coords.longitude)
-        @$el.find('[name=latitude]').val(pos.coords.latitude)
+        @$geolocation.val('true')
+        @$longitude.val(pos.coords.longitude)
+        @$latitude.val(pos.coords.latitude)
+        @_geolocationIndicator on
     ,
       (error) =>
         switch error.code
@@ -27,10 +36,17 @@ class TweetForm
             console.log error.message
           when 3 # Timeout
             console.log error.message
-        @$el.find('[name=geolocation]').val('false')
+        @$geolocation.val('false')
+        @_geolocationIndicator off
     ,
       enableHighAccuracy: yes
     )
+
+  _geolocationIndicator: (active) ->
+    if active
+      @$gpsButton.addClass('btn-success active').removeClass('btn-default')
+    else
+      @$gpsButton.addClass('btn-default').removeClass('btn-success active')
 
 $ -> new TweetForm($('#tweet-form'))
 
