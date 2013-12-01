@@ -23,7 +23,6 @@ class TweetForm
       @_geolocationIndicator off
       return
 
-    # TODO display success or failure message
     GPS.getCurrentPosition(
       (pos) =>
         @$geolocation.val('true')
@@ -33,12 +32,21 @@ class TweetForm
     ,
       (error) =>
         switch error.code
-          when 1 # Permission denied
-            console.log error.message
-          when 2 # Position unavailable
-            console.log error.message
-          when 3 # Timeout
-            console.log error.message
+          when 1
+            Alerts.pushAlert
+              type: 'danger'
+              title: 'Permission denied'
+              message: error.message
+          when 2
+            Alerts.pushAlert
+              type: 'warning'
+              title: 'GPS unavailable'
+              message: error.message
+          when 3
+            Alerts.pushAlert
+              type: 'warning'
+              title: 'GPS timeout'
+              message: error.message
         @$geolocation.val('false')
         @_geolocationIndicator off
     ,
