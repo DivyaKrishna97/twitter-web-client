@@ -14,7 +14,13 @@
             </a>
             <div class="media-body">
                 <h4 class="media-heading">{{author}} <small>@@{{screenName}}</small></h4>
-                {{message}}
+                <p class="list-group-item-text">{{message}}</p>
+                {{#if retweet}}
+                <p class="list-group-item-text text-muted small">
+                <span class="glyphicon glyphicon-retweet"></span>
+                Retweeted by {{retweetedBy}}
+                </p>
+                {{/if}}
             </div>
         </div>
     </div>
