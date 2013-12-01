@@ -6,6 +6,7 @@ import play.api._
 import play.api.mvc._
 import play.api.libs.json._
 import play.filters.csrf._
+
 import securesocial.core.SecureSocial
 
 import services.TwitterService
@@ -52,9 +53,11 @@ object Client extends Controller
         tweetData => {
           val (token, secret) = userAccessContext.get
           val photo = for { photo <- request.body.file("photo") } yield photo.ref.file
-          TwitterService(token, secret).createStatusUpdate(tweetData, photo)
-          // TODO handle success and failure condition
-          Redirect(routes.Client.home)
+          val result = TwitterService(token, secret).createStatusUpdate(tweetData, photo)
+          result match {
+            case Success(_) => Redirect(routes.Client.home).flashing("success" -> "status update posted")
+            case Failure(_) => Redirect(routes.Client.home).flashing("server-error" -> "failed to post status update")
+          }
         }
       )
     }

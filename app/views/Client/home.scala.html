@@ -1,4 +1,4 @@
-@(timeline: String, tweetForm: Form[TweetData])(implicit user: Option[securesocial.core.Identity], token: Option[play.filters.csrf.CSRF.Token] = None)
+@(timeline: String, tweetForm: Form[TweetData])(implicit user: Option[securesocial.core.Identity], token: Option[play.filters.csrf.CSRF.Token] = None, flash: Flash)
 
 @import helper._
 @import play.api.i18n.Messages

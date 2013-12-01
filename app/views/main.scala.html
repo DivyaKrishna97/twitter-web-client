@@ -1,4 +1,4 @@
-@(title: String, pageScripts: Html = Html(""))(content: Html)(implicit user:Option[securesocial.core.Identity] = None)
+@(title: String, pageScripts: Html = Html(""))(content: Html)(implicit user:Option[securesocial.core.Identity] = None, flash: Flash)
 
 <!DOCTYPE html>
 <html>
@@ -33,5 +33,15 @@
         <script src="@routes.Assets.at("javascripts/page_store.min.js")"></script>
         <script src="@routes.Assets.at("javascripts/alerts.min.js")"></script>
         @pageScripts
+        @if(!flash.isEmpty) {
+        <script type="text/javascript">
+        @for(message <- flash.get("success")) {
+            Alerts.pushAlert({type: "success", title: "Success! ", message: "@message"});
+        }
+        @for(message <- flash.get("server-error")) {
+            Alerts.pushAlert({type: "danger", title: "Server error: ", message: "@message"});
+        }
+        </script>
+        }
     </body>
 </html>
