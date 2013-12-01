@@ -1,7 +1,8 @@
-@(timeline: String, tweetForm: Form[TweetData])(implicit user: Option[securesocial.core.Identity])
+@(timeline: String, tweetForm: Form[TweetData])(implicit user: Option[securesocial.core.Identity], token: Option[play.filters.csrf.CSRF.Token] = None)
 
 @import helper._
 @import play.api.i18n.Messages
+
 
 @pageScripts = {
 <script type="text/x-handlebars" id="template-tweet">
@@ -43,6 +44,7 @@
                       'role -> "form",
                       'enctype -> "multipart/form-data") {
                     <div class="hidden">
+                        @CSRF.formField(token.get)
                         <input type="hidden" name="utf8" value="✓">
                         <input type="hidden" name="geolocation" value="false">
                         <input type="hidden" name="longitude" value="0">

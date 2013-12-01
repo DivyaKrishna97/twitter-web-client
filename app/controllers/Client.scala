@@ -5,6 +5,7 @@ import scala.util.{Success, Failure}
 import play.api._
 import play.api.mvc._
 import play.api.libs.json._
+import play.filters.csrf._
 import securesocial.core.SecureSocial
 
 import services.TwitterService
@@ -16,8 +17,10 @@ object Client extends Controller
     with SecureSocial
     with AuthenticatedUser {
 
-  def home = SecuredAction { implicit request =>
-    Ok(views.html.Client.home(jsonTimeline, TweetData.createForm))
+  def home = CSRFAddToken {
+    SecuredAction { implicit request =>
+      Ok(views.html.Client.home(jsonTimeline, TweetData.createForm))
+    }
   }
 
   // Returns tweets in the timeline before the ID
@@ -35,20 +38,21 @@ object Client extends Controller
     }
   }
 
-  def createStatus = SecuredAction(parse.multipartFormData) { implicit request =>
-    // TODO CSRF protection
-    TweetData.createForm.bindFromRequest.fold(
-      formWithErrors => {
-        BadRequest(views.html.Client.home(jsonTimeline, formWithErrors))
-      },
-      tweetData => {
-        val (token, secret) = userAccessContext.get
-        val photo = for { photo <- request.body.file("photo") } yield photo.ref.file
-        TwitterService(token, secret).createStatusUpdate(tweetData, photo)
-        // TODO handle success and failure condition
-        Redirect(routes.Client.home)
-      }
-    )
+  def createStatus = CSRFCheck {
+    SecuredAction(parse.multipartFormData) { implicit request =>
+      TweetData.createForm.bindFromRequest.fold(
+        formWithErrors => {
+          BadRequest(views.html.Client.home(jsonTimeline, formWithErrors))
+        },
+        tweetData => {
+          val (token, secret) = userAccessContext.get
+          val photo = for { photo <- request.body.file("photo") } yield photo.ref.file
+          TwitterService(token, secret).createStatusUpdate(tweetData, photo)
+          // TODO handle success and failure condition
+          Redirect(routes.Client.home)
+        }
+      )
+    }
   }
 
   private def jsonTimeline(implicit request: RequestHeader) = {

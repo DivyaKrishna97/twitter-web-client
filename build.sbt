@@ -6,6 +6,7 @@ libraryDependencies ++= Seq(
   jdbc,
   anorm,
   cache,
+  filters,
   "securesocial" %% "securesocial" % "2.1.2",
   "org.twitter4j" % "twitter4j-core" % "3.0.5"
 )
