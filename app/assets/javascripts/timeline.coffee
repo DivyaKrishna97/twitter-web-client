@@ -6,9 +6,11 @@ class Timeline
 
   constructor: (@$el, @tweets) ->
     @$el.on('click', '.more-tweets', @loadOlderTweets)
+    @$statusList = @$el.children('.status-list')
 
   render: ->
-    @$el.html('')
+    @$statusList.empty()
+    @$el.children('.empty-timeline-message').toggle(@tweets.length is 0)
     @_appendingRender(@tweets)
 
   loadOlderTweets: (evt) =>
@@ -28,8 +30,9 @@ class Timeline
     no # Suppress default event handling
 
   _appendingRender: (tweets) ->
+    return unless tweets.length > 0
     [body..., last] = tweets
-    @$el.append @template
+    @$statusList.append @template
       tweets: tweets
       beforeId: last.id
 
