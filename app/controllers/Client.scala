@@ -1,6 +1,6 @@
 package controllers
 
-import scala.util.{Success, Failure}
+import scala.util.{Try, Success, Failure}
 
 import play.api._
 import play.api.mvc._
@@ -28,10 +28,15 @@ object Client extends Controller
     request.getQueryString("beforeId") match {
       case Some(beforeId) => {
         val (token, secret) = userAccessContext.get
-        // TODO handle the case where beforeId is not an integer
-        TwitterService(token, secret).homeTimeline(beforeId.toLong) match {
+
+        val timeline = for {
+            id <- Try { beforeId.toLong }
+            result <- TwitterService(token, secret).homeTimeline(id)
+        } yield result
+
+        timeline match {
           case Success(timeline) => Ok(Json.toJson(timeline.map(StatusExt(_).toJson)))
-          case Failure(e) => InternalServerError(e.getMessage)
+          case Failure(_) => InternalServerError("Cannot retrieve timeline")
         }
       }
       case None => BadRequest("beforeId parameter required")
