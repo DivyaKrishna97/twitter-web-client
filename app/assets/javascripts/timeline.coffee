@@ -23,8 +23,16 @@ class Timeline
         $button.remove()
     ,
       (errorReason) ->
-        # TODO handle this properly
-        console.log errorReason
+        if errorReason.status is 401
+          Alerts.pushAlert
+            type: 'danger'
+            title: 'You are logged out'
+            message: 'please refresh the page to log back in'
+        if errorReason.status >= 500
+          Alerts.pushAlert
+            type: 'warning'
+            title: 'Server error'
+            message: 'please try again later'
     )
     no # Suppress default event handling
 
