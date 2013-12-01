@@ -17,6 +17,7 @@ GET     /not-authorized             securesocial.controllers.ProviderController.
 
 GET     /home                       controllers.Client.home
 GET     /status/before              controllers.Client.statusBefore
+GET     /status/after               controllers.Client.statusAfter
 POST    /status                     controllers.Client.createStatus
 
 # Map static resources from the /public folder to the /assets URL path

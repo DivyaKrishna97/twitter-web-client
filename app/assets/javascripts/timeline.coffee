@@ -1,12 +1,19 @@
 $ = jQuery
 T = Handlebars
 
+# Long interval because the REST API is rate limited.
+POLL_INTERVAL = 37 * 1000 # milliseconds
+
 class Timeline
-  template: T.compile($("#template-tweet").html())
+  statusTemplate: T.compile($('#template-tweet').html())
+  messageTemplate: T.compile('Load {{numTweets}} new {{inflection}}')
 
   constructor: (@$el, @tweets) ->
     @$el.on('click', '.more-tweets', @loadOlderTweets)
+    @$el.on('click', '.more-tweets-message', @displayNewerTweets)
     @$statusList = @$el.children('.status-list')
+    @$moreTweetsMessage = @$el.find('.more-tweets-message')
+    @tweetBuffer = []
 
   render: ->
     @$statusList.empty()
@@ -36,14 +43,51 @@ class Timeline
     )
     no # Suppress default event handling
 
+  startPolling: ->
+    @pollId = window.setInterval(@fetchNewerTweets, POLL_INTERVAL)
+
+  stopPolling: ->
+    window.clearInterval(@pollId)
+
+  fetchNewerTweets: =>
+    [head, rest...] = @tweets
+    $.getJSON('/status/after', id: head?.id or 0).then((result) =>
+      @tweetBuffer = result
+      @_updateMoreTweetsMessage()
+    )
+
+  displayNewerTweets: =>
+    @stopPolling()
+    tweets = @tweetBuffer
+    @tweetBuffer = []
+    @_prependingRender(tweets)
+    @tweets.unshift.apply(@tweets, tweets)
+    @_updateMoreTweetsMessage()
+    @startPolling()
+
+  _updateMoreTweetsMessage: ->
+    @$moreTweetsMessage.html(
+      @messageTemplate
+        numTweets: @tweetBuffer.length
+        inflection: if @tweetBuffer.length > 1 then 'Tweets' else 'Tweet'
+    )
+    @$moreTweetsMessage.toggle(@tweetBuffer.length > 0)
+
   _appendingRender: (tweets) ->
     return unless tweets.length > 0
     [body..., last] = tweets
-    @$statusList.append @template
+    @$statusList.append @statusTemplate
       tweets: tweets
       beforeId: last.id
+
+  _prependingRender: (tweets) ->
+    return unless tweets.length > 0
+    @$statusList.prepend @statusTemplate
+      tweets: tweets
+      beforeId: null
 
 $ ->
   timeline = new Timeline($('#timeline'), PageStore.get('timeline'))
   timeline.render()
+  timeline.startPolling()
 

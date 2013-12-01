@@ -7,7 +7,8 @@ body {
     width: 32px;
 }
 
-#timeline .more-tweets {
+#timeline .more-tweets,
+#timeline .more-tweets-message {
     text-align: center;
 }
 

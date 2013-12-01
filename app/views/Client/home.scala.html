@@ -25,7 +25,9 @@
         </div>
     </div>
 {{/each}}
+{{#if beforeId}}
 <a href="#" class="list-group-item more-tweets" data-before-tweet-id="{{beforeId}}">More Tweets</a>
+{{/if}}
 </script>
 <script type="text/javascript">
     PageStore.set('timeline', @Html(timeline));
@@ -81,6 +83,7 @@
     <div class="col-md-8">
         <h2>Tweets</h2>
         <div id="timeline" class="list-group">
+            <a href="#" class="list-group-item more-tweets-message" style="display:none;"></a>
             <div class="list-group-item empty-timeline-message" style="display:none;">
                 <p class="text-center list-group-item-text">Your timeline is currently empty.</p>
             </div>

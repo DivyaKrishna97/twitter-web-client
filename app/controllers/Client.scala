@@ -44,6 +44,21 @@ object Client extends Controller
     }
   }
 
+  def statusAfter = SecuredAction(ajaxCall = true) { implicit request =>
+    val afterId = request.getQueryString("id").getOrElse("0")
+    val (token, secret) = userAccessContext.get
+
+    val timeline = for {
+      id <- Try { afterId.toLong }
+      result <- TwitterService(token, secret).homeTimelineAfter(id)
+    } yield result
+
+    timeline match {
+      case Success(timeline) => Ok(Json.toJson(timeline.map(StatusExt(_).toJson)))
+      case Failure(_) => InternalServerError("Cannot retrieve timeline")
+    }
+  }
+
   def createStatus = CSRFCheck {
     SecuredAction(parse.multipartFormData) { implicit request =>
       TweetData.createForm.bindFromRequest.fold(

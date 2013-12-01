@@ -74,7 +74,8 @@ class TwitterServiceImpl(val client: Twitter) extends TwitterService {
   def homeTimelineAfter(tweetId: Long) = {
     Try {
       val paging = new Paging
-      paging.setSinceId(tweetId)
+      // Twitter API doesn't seem to like 0 as a sentinel value
+      if (tweetId > 0) paging.setSinceId(tweetId)
       client.getHomeTimeline(paging).asScala.toList
     }
   }
