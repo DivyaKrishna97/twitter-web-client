@@ -1,7 +1,6 @@
 $ = jQuery
 GPS = geo_position_js
 
-# TODO indicate when image is selected
 class TweetForm
 
   constructor: (@$el) ->
@@ -13,6 +12,10 @@ class TweetForm
     @$geolocation = @$el.find('[name=geolocation]')
     @$longitude = @$el.find('[name=longitude]')
     @$latitude = @$el.find('[name=latitude]')
+
+    @$photoInput = @$el.find('[name=photo]')
+    @$el.on('change', '[name=photo]', @togglePhotoIndicator)
+    @$el.on('click', '[name=photo]', @removePhoto)
 
   toggleGeolocation: =>
     if @$geolocation.val() is 'true'
@@ -42,11 +45,31 @@ class TweetForm
       enableHighAccuracy: yes
     )
 
+  togglePhotoIndicator: =>
+    @_photoIndicator on
+
+  removePhoto: (evt) =>
+    return unless @$photoInput.val()
+    evt.preventDefault()
+    @$photoInput.wrap('<form>').closest('form').get(0).reset()
+    @$photoInput.unwrap()
+    @_photoIndicator off
+
   _geolocationIndicator: (active) ->
+    onClasses = 'btn-success active'
+    offClasses = 'btn-default'
     if active
-      @$gpsButton.addClass('btn-success active').removeClass('btn-default')
+      @$gpsButton.addClass(onClasses).removeClass(offClasses)
     else
-      @$gpsButton.addClass('btn-default').removeClass('btn-success active')
+      @$gpsButton.addClass(offClasses).removeClass(onClasses)
+
+  _photoIndicator: (active) ->
+    onClasses = 'btn-success active'
+    offClasses = 'btn-default'
+    if active
+      @$photoInput.parent('.photo-button').addClass(onClasses).removeClass(offClasses)
+    else
+      @$photoInput.parent('.photo-button').addClass(offClasses).removeClass(onClasses)
 
 $ -> new TweetForm($('#tweet-form'))
 
