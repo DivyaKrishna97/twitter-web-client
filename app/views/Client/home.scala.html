@@ -60,10 +60,10 @@
                             <span class="help-block">@tweetForm.errors("status").map(e => Messages(e.message)).mkString(", ")</span>
                         }
                     </div>
-                    <div class="photo-button btn btn-default">
+                    <button class="photo-button btn btn-default">
                         <span class="glyphicon glyphicon-camera"></span>
                         <input type="file" name="photo">
-                    </div>
+                    </button>
                     <button type="button" class="btn btn-default js-geolocation">
                         <span class="glyphicon glyphicon-map-marker"></span>
                     </button>
