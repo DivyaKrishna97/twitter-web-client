@@ -1,5 +1,17 @@
 # Twitter Web Client
 
+A basic clone of a user's Twitter home timeline page. The features implemented
+are:
+
+* authenticate against Twitter
+* viewing timeline, loading older tweets/statuses manually (i.e. no autoload on
+scroll)
+* posting a status update with attachment and location
+* basic polling for new tweets/statuses on the timeline (this does not use the
+streaming API, so it can and will hit the REST API rate limit)
+
+Implemented with Scala and Play Framework 2.2.
+
 ## Configuration
 
 Environment variables to set up:
@@ -7,4 +19,20 @@ Environment variables to set up:
 * `APPLICATION_SECRET` to set the `application.secret` value
 * `TWITTER_CONSUMER_KEY`
 * `TWITTER_CONSUMER_SECRET`
+
+You will need to create a new application at: https://dev.twitter.com/apps
+The settings to use under `Application Type` are:
+
+* Read and Write access
+* http://host:port/authenticate/twitter for the callback URL
+* Tick `Allow this application to be used to Sign in with Twitter`
+
+## Running on a development environment
+
+I assume you are running a Unix-like OS and already have a Scala and Play
+Framework 2.2+ environment configured.
+
+1. Export the environment variables, eg. `$ export APPLICATION_SECRET=blah`
+2. `$ play run`
+3. Go to http://0.0.0.0:9000/
 
