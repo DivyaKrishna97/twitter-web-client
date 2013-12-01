@@ -18,7 +18,6 @@ class Timeline
     tweetId = $button.data('before-tweet-id')
     $.getJSON('/historical', beforeId: tweetId).then(
       (result) =>
-        console.log(result)
         @_appendingRender(result)
         @tweets.push(tweet) for tweet in result
         $button.remove()

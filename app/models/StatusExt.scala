@@ -10,7 +10,7 @@ class StatusExt(val status: Status) {
     val user = status.getUser
     Json.toJson(
       Map(
-        "id" -> Json.toJson(status.getId),
+        "id" -> Json.toJson(status.getId.toString),
         "message" -> Json.toJson(status.getText),
         "author" -> Json.toJson(user.getName),
         "screenName" -> Json.toJson(user.getScreenName),
