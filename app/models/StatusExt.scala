@@ -12,7 +12,7 @@ class StatusExt(val status: Status) {
 
     Json.toJson(
       Map(
-        "id" -> Json.toJson(message.getId.toString),
+        "id" -> Json.toJson(status.getId.toString),
         "message" -> Json.toJson(message.getText),
         "author" -> Json.toJson(user.getName),
         "screenName" -> Json.toJson(user.getScreenName),
