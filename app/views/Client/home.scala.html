@@ -1,4 +1,7 @@
-@(timeline: String)(implicit user: Option[securesocial.core.Identity])
+@(timeline: String, tweetForm: Form[TweetData])(implicit user: Option[securesocial.core.Identity])
+
+@import helper._
+@import play.api.i18n.Messages
 
 @pageScripts = {
 <script type="text/x-handlebars" id="template-tweet">
@@ -35,19 +38,25 @@
                 </h3>
             </div>
             <div class="panel-body">
-                <form id="tweet-form" role="form" method="post" enctype="multipart/form-data">
+                @form(action = routes.Client.createStatus(),
+                      'id -> "tweet-form",
+                      'role -> "form",
+                      'enctype -> "multipart/form-data") {
                     <div class="hidden">
                         <input type="hidden" name="utf8" value="✓">
-                        <input type="hidden" name="geolocation" value="no">
+                        <input type="hidden" name="geolocation" value="false">
                         <input type="hidden" name="longitude" value="0">
                         <input type="hidden" name="latitude" value="0">
                     </div>
-                    <div class="form-group">
+                    <div class="form-group @if(tweetForm.error("status")) { has-error }">
                         <textarea class="form-control"
                                 name="status"
                                 maxlength="140"
                                 placeholder="Compose new Tweet..."
                                 required></textarea>
+                        @if(tweetForm.error("status")) {
+                            <span class="help-block">@tweetForm.errors("status").map(e => Messages(e.message)).mkString(", ")</span>
+                        }
                     </div>
                     <div class="photo-button btn btn-default">
                         <span class="glyphicon glyphicon-camera"></span>
@@ -57,7 +66,7 @@
                         <span class="glyphicon glyphicon-map-marker"></span>
                     </button>
                     <button type="submit" class="btn btn-default pull-right">Tweet</button>
-                 </form>
+                }
              </div>
         </div>
     </div>

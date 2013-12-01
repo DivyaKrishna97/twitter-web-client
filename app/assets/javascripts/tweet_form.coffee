@@ -15,19 +15,19 @@ class TweetForm
     # TODO display success or failure message
     GPS.getCurrentPosition(
       (pos) =>
-        @$el.find('[name=geolocation]').val('yes')
+        @$el.find('[name=geolocation]').val('true')
         @$el.find('[name=longitude]').val(pos.coords.longitude)
         @$el.find('[name=latitude]').val(pos.coords.latitude)
     ,
       (error) =>
         switch error.code
-          when 1 # Permission deined
+          when 1 # Permission denied
             console.log error.message
           when 2 # Position unavailable
             console.log error.message
           when 3 # Timeout
             console.log error.message
-        @$el.find('[name=geolocation]').val('no')
+        @$el.find('[name=geolocation]').val('false')
     ,
       enableHighAccuracy: yes
     )
