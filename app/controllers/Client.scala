@@ -32,7 +32,7 @@ object Client extends Controller
 
         val timeline = for {
             id <- Try { beforeId.toLong }
-            result <- TwitterService(token, secret).homeTimeline(id)
+            result <- TwitterService(token, secret).homeTimelineBefore(id)
         } yield result
 
         timeline match {

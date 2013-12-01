@@ -15,10 +15,17 @@ trait TwitterService {
 
   /** Returns tweets in the user's home timeline before the tweet with the given ID.
    *
-   * @param beforeTweetId
+   * @param tweetId
     *@return the list of tweets/statuses, if successful
    */
-  def homeTimeline(beforeTweetId: Long): Try[List[Status]]
+  def homeTimelineBefore(tweetId: Long): Try[List[Status]]
+
+  /** Returns tweets in the user's home timeline after the tweet with the given ID.
+   *
+   * @param tweetId
+   * @return
+   */
+  def homeTimelineAfter(tweetId: Long): Try[List[Status]]
 
   /** Create a new status update tweet.
    *
@@ -56,10 +63,18 @@ object TwitterService {
 class TwitterServiceImpl(val client: Twitter) extends TwitterService {
   def homeTimeline = Try { client.getHomeTimeline.asScala.toList }
 
-  def homeTimeline(beforeTweetId: Long) = {
+  def homeTimelineBefore(tweetId: Long) = {
     Try {
       val paging = new Paging
-      paging.setMaxId(beforeTweetId - 1)
+      paging.setMaxId(tweetId - 1)
+      client.getHomeTimeline(paging).asScala.toList
+    }
+  }
+
+  def homeTimelineAfter(tweetId: Long) = {
+    Try {
+      val paging = new Paging
+      paging.setSinceId(tweetId)
       client.getHomeTimeline(paging).asScala.toList
     }
   }
