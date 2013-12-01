@@ -25,8 +25,8 @@ object Client extends Controller
   }
 
   // Returns tweets in the timeline before the ID
-  def historical = SecuredAction(ajaxCall = true) { implicit request =>
-    request.getQueryString("beforeId") match {
+  def statusBefore = SecuredAction(ajaxCall = true) { implicit request =>
+    request.getQueryString("id") match {
       case Some(beforeId) => {
         val (token, secret) = userAccessContext.get
 
@@ -40,7 +40,7 @@ object Client extends Controller
           case Failure(_) => InternalServerError("Cannot retrieve timeline")
         }
       }
-      case None => BadRequest("beforeId parameter required")
+      case None => BadRequest("id parameter required")
     }
   }
 

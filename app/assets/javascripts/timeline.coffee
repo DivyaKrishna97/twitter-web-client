@@ -16,7 +16,7 @@ class Timeline
   loadOlderTweets: (evt) =>
     $button = $(evt.target)
     tweetId = $button.data('before-tweet-id')
-    $.getJSON('/historical', beforeId: tweetId).then(
+    $.getJSON('/status/before', id: tweetId).then(
       (result) =>
         @_appendingRender(result)
         @tweets.push(tweet) for tweet in result
