@@ -1,12 +1,15 @@
 package services
 
+import scala.concurrent.Future
 import scala.collection.JavaConverters._
 import scala.util.Try
+import java.io.File
+
 import twitter4j._
 import twitter4j.conf.ConfigurationBuilder
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import models.TweetData
-import play.api.mvc.MultipartFormData.FilePart
-import java.io.File
+
 
 /** Wraps the Twitter4J library to be more Scala compatible */
 trait TwitterService {
@@ -18,14 +21,14 @@ trait TwitterService {
    * @param tweetId
     *@return the list of tweets/statuses, if successful
    */
-  def homeTimelineBefore(tweetId: Long): Try[List[Status]]
+  def homeTimelineBefore(tweetId: Long): Future[List[Status]]
 
   /** Returns tweets in the user's home timeline after the tweet with the given ID.
    *
    * @param tweetId
    * @return
    */
-  def homeTimelineAfter(tweetId: Long): Try[List[Status]]
+  def homeTimelineAfter(tweetId: Long): Future[List[Status]]
 
   /** Create a new status update tweet.
    *
@@ -64,7 +67,7 @@ class TwitterServiceImpl(val client: Twitter) extends TwitterService {
   def homeTimeline = Try { client.getHomeTimeline.asScala.toList }
 
   def homeTimelineBefore(tweetId: Long) = {
-    Try {
+    Future {
       val paging = new Paging
       paging.setMaxId(tweetId - 1)
       client.getHomeTimeline(paging).asScala.toList
@@ -72,7 +75,7 @@ class TwitterServiceImpl(val client: Twitter) extends TwitterService {
   }
 
   def homeTimelineAfter(tweetId: Long) = {
-    Try {
+    Future {
       val paging = new Paging
       // Twitter API doesn't seem to like 0 as a sentinel value
       if (tweetId > 0) paging.setSinceId(tweetId)
