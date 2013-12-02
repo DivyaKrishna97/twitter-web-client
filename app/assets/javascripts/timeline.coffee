@@ -2,7 +2,7 @@ $ = jQuery
 T = Handlebars
 
 # Long interval because the REST API is rate limited.
-POLL_INTERVAL = 37 * 1000 # milliseconds
+POLL_INTERVAL = 60 * 1000 # milliseconds
 
 class Timeline
   statusTemplate: T.compile($('#template-tweet').html())
@@ -43,13 +43,17 @@ class Timeline
     )
     no # Suppress default event handling
 
-  startPolling: ->
-    @pollId = window.setInterval(@fetchNewerTweets, POLL_INTERVAL)
+  poll: =>
+    @pollId = window.setTimeout(=>
+      @_fetchNewerTweets().then(@poll, @poll)
+    ,
+      POLL_INTERVAL
+    )
 
   stopPolling: ->
-    window.clearInterval(@pollId)
+    window.clearTimeout(@pollId)
 
-  fetchNewerTweets: =>
+  _fetchNewerTweets: =>
     [head, rest...] = @tweets
     $.getJSON('/status/after', id: head?.id or 0).then((result) =>
       @tweetBuffer = result
@@ -63,7 +67,7 @@ class Timeline
     @_prependingRender(tweets)
     @tweets.unshift.apply(@tweets, tweets)
     @_updateMoreTweetsMessage()
-    @startPolling()
+    @poll()
 
   _updateMoreTweetsMessage: ->
     @$moreTweetsMessage.html(
@@ -89,5 +93,5 @@ class Timeline
 $ ->
   timeline = new Timeline($('#timeline'), PageStore.get('timeline'))
   timeline.render()
-  timeline.startPolling()
+  timeline.poll()
 
