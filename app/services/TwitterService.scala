@@ -2,7 +2,6 @@ package services
 
 import scala.concurrent.Future
 import scala.collection.JavaConverters._
-import scala.util.Try
 import java.io.File
 
 import twitter4j._
@@ -14,7 +13,7 @@ import models.TweetData
 /** Wraps the Twitter4J library to be more Scala compatible */
 trait TwitterService {
   /** Returns tweets in the user's home timeline */
-  def homeTimeline: Try[List[Status]]
+  def homeTimeline: Future[List[Status]]
 
   /** Returns tweets in the user's home timeline before the tweet with the given ID.
    *
@@ -36,7 +35,7 @@ trait TwitterService {
    * @param photo Optional file attached for the tweet
     *@return the created status, if successful
    */
-  def createStatusUpdate(data: TweetData, photo: Option[File]): Try[Status]
+  def createStatusUpdate(data: TweetData, photo: Option[File]): Future[Status]
 }
 
 object TwitterService {
@@ -64,7 +63,7 @@ object TwitterService {
 }
 
 class TwitterServiceImpl(val client: Twitter) extends TwitterService {
-  def homeTimeline = Try { client.getHomeTimeline.asScala.toList }
+  def homeTimeline = Future { client.getHomeTimeline.asScala.toList }
 
   def homeTimelineBefore(tweetId: Long) = {
     Future {
@@ -84,7 +83,7 @@ class TwitterServiceImpl(val client: Twitter) extends TwitterService {
   }
 
   def createStatusUpdate(data: TweetData, photo: Option[File]) = {
-    Try {
+    Future {
       val status = new StatusUpdate(data.status)
       if (data.geolocation) {
         status.setLocation(new GeoLocation(data.latitude.toDouble, data.longitude.toDouble))

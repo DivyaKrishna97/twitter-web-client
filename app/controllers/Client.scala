@@ -1,7 +1,6 @@
 package controllers
 
 import scala.concurrent.Future
-import scala.util.{Try, Success, Failure}
 
 import play.api._
 import play.api.mvc._
@@ -21,8 +20,10 @@ object Client extends Controller
     with AuthenticatedUser {
 
   def home = CSRFAddToken {
-    SecuredAction { implicit request =>
-      Ok(views.html.Client.home(jsonTimeline, TweetData.createForm))
+    SecuredAction.async { implicit request =>
+      for {
+        timeline <- defaultTimeline
+      } yield Ok(views.html.Client.home(timeline, TweetData.createForm))
     }
   }
 
@@ -54,31 +55,31 @@ object Client extends Controller
   }
 
   def createStatus = CSRFCheck {
-    SecuredAction(parse.multipartFormData) { implicit request =>
+    SecuredAction.async(parse.multipartFormData) { implicit request =>
       TweetData.createForm.bindFromRequest.fold(
         formWithErrors => {
-          BadRequest(views.html.Client.home(jsonTimeline, formWithErrors))
+          for {
+            timeline <- defaultTimeline
+          } yield BadRequest(views.html.Client.home(timeline, formWithErrors))
         },
         tweetData => {
           val (token, secret) = userAccessContext.get
           val photo = for { photo <- request.body.file("photo") } yield photo.ref.file
-          val result = TwitterService(token, secret).createStatusUpdate(tweetData, photo)
-          result match {
-            case Success(_) => Redirect(routes.Client.home).flashing("success" -> "status update posted")
-            case Failure(_) => Redirect(routes.Client.home).flashing("server-error" -> "failed to post status update")
+          (for {
+            result <- TwitterService(token, secret).createStatusUpdate(tweetData, photo)
+          } yield Redirect(routes.Client.home).flashing("success" -> "status update posted")).recover {
+            case _ => Redirect(routes.Client.home).flashing("server-error" -> "failed to post status update")
           }
         }
       )
     }
   }
 
-  private def jsonTimeline(implicit request: RequestHeader) = {
+  private def defaultTimeline(implicit request: RequestHeader) = {
     val (token, secret) = userAccessContext.get
-    val timeline = TwitterService(token, secret).homeTimeline match {
-      case Success(timeline) => timeline.map(StatusExt(_).toJson)
-      case Failure(e) => Seq.empty
-    }
-    Json.stringify(Json.toJson(timeline))
+    for {
+      timeline <- TwitterService(token, secret).homeTimeline.recover { case _ => Nil }
+    } yield Json.stringify(Json.toJson(timeline.map(StatusExt(_).toJson)))
   }
 
 }
